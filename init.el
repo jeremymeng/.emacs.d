@@ -59,7 +59,7 @@
 ;; fullscreen frames
 ; (add-to-list 'default-frame-alist '(maximize-emacs-window))
 
-(server-start)
+;; (server-start)
 ;; ;; gnuserv
 ;; (require 'gnuserv)
 ;; (gnuserv-start)
@@ -141,10 +141,6 @@
   :bind ("C-x m" . magit-status)
   :commands magit-status)
 
-(use-package w3m
-  :defer t
-  :ensure t)
-
 (use-package gh
   :defer t
   :ensure t)
@@ -168,6 +164,7 @@
                 (indirect-region beg end))))
   :ensure t)
 
+(require 'cl)
 (use-package csharp-mode
   :mode ("\\.cs$" . csharp-mode)
   :config (progn
@@ -218,7 +215,29 @@
       ibuffer-elide-long-columns t
       ibuffer-eliding-string "&"))
   
+;; Solarized theme
+(use-package solarized
+;  :disabled t
+  :if (window-system)
+  :defer t
+  :init (load-theme 'solarized-dark 'no-confirm)
+  :config
+  (progn
+    ;; As of 20140313: avoid underlining the modeline
+    (set-face-attribute 'mode-line nil :underline nil)
+    (set-face-attribute 'mode-line-inactive nil :underline nil)
 
+    ;; Nicer trailing whitespace indication
+    (set-face-attribute 'trailing-whitespace nil
+                        :background
+                        (face-attribute 'warning :foreground)))
+
+  ;; Fix solarized linum background
+  (add-hook 'linum-before-numbering-hook
+            (lambda ()
+              (set-face-attribute
+               'linum nil :background
+                              (face-attribute 'header-line  :background)))))
 
 ;; set by emacs
 
