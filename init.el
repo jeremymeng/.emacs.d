@@ -141,10 +141,11 @@
   :bind ("C-x m" . magit-status)
   :commands magit-status)
 
-(require-package 'fullframe)
-(after-load 'magit
-  (fullframe magit-status magit-mode-quit-window))
-  
+(use-package fullframe
+  :ensure t)
+
+(fullframe magit-status magit-mode-quit-window)
+
 (use-package git-timemachine
   :ensure t
   :defer t)
