@@ -223,30 +223,8 @@
                         (mark " " (name 16 -1) " " filename))
       ibuffer-elide-long-columns t
       ibuffer-eliding-string "&"))
-  
-;; Solarized theme
-(use-package solarized
-;  :disabled t
-  :if (window-system)
-  :defer t
-  :init (load-theme 'solarized-dark 'no-confirm)
-  :config
-  (progn
-    ;; As of 20140313: avoid underlining the modeline
-    (set-face-attribute 'mode-line nil :underline nil)
-    (set-face-attribute 'mode-line-inactive nil :underline nil)
 
-    ;; Nicer trailing whitespace indication
-    (set-face-attribute 'trailing-whitespace nil
-                        :background
-                        (face-attribute 'warning :foreground)))
-
-  ;; Fix solarized linum background
-  (add-hook 'linum-before-numbering-hook
-            (lambda ()
-              (set-face-attribute
-               'linum nil :background
-                              (face-attribute 'header-line  :background)))))
+(load-theme 'manoj-dark 'no-confirm)
 
 ;; set by emacs
 
