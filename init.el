@@ -224,7 +224,32 @@
       ibuffer-elide-long-columns t
       ibuffer-eliding-string "&"))
 
-(load-theme 'manoj-dark 'no-confirm)
+(use-package paredit
+  :defer t
+  :ensure t)
+
+(use-package clojure-mode
+  :defer t
+  :ensure t
+  :config (progn
+            (add-hook 'clojure-mode-hook 'enable-paredit-mode)
+            ))
+
+(use-package clojure-mode-extra-font-locking
+  :defer t
+  :ensure t)
+
+(use-package cider
+  :defer t
+  :ensure t
+  :config (progn
+            (add-hook 'cider-mode-hook 'eldoc-mode)))
+
+(use-package rainbow-delimiters
+  :defer t
+  :ensure t)
+
+(load-theme 'leuven 'no-confirm)
 
 ;; set by emacs
 
@@ -240,6 +265,9 @@
  '(flyspell-default-dictionary "english")
  '(font-latex-do-multi-line t)
  '(global-font-lock-mode t nil (font-lock))
+ '(package-selected-packages
+   (quote
+    (rainbow-delimiters cider clojure-mode-extra-font-locking clojure-mode paredit company markdown-mode csharp-mode web-mode helm gh git-timemachine fullframe magit undo-tree)))
  '(show-paren-mode t nil (paren))
  '(uniquify-buffer-name-style (quote forward) nil (uniquify)))
 (custom-set-faces
