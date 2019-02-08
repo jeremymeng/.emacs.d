@@ -3,25 +3,15 @@
 ;; Set whatever
 ;;
 
-(add-to-list 'load-path "~/.emacs.d/elisp")
+(add-to-list 'load-path "~/.emacs.d/elisp/use-package-2.4")
 
-(display-time)
-(setq make-backup-files nil)
-;; Automaticly delete the auto save file (usually #*#)
-(setq delete-auto-save-files t)
-;; Always add a final new line to the end of each file
 (setq require-final-newline t)
 (setq inhibit-startup-message t)
-(setq line-number-mode t)
-(setq column-number-mode t)
 (line-number-mode t)
 (column-number-mode t)
 (setq-default transient-mark-mode t)
 (setq fill-column 80)
-(auto-image-file-mode t)
 (setq-default indent-tabs-mode nil)
-(setq-default c-basic-offset 2)
-(setq java-mode-hook '(lambda () (setq c-basic-offset 2)))
 (setq frame-title-format
       '("%S: " (buffer-file-name "%f"
                                  (dired-directory dired-directory "%b"))))
@@ -31,13 +21,15 @@
        ;; Maximum colors
        (setq font-lock-maximum-decoration t)))
 
-
 (dolist (hook '(text-mode-hook))
   (add-hook hook (lambda () (flyspell-mode 1))))
 (dolist (hook '(text-mode-hook))
   (add-hook hook (lambda () (auto-fill-mode 1))))
 (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
   (add-hook hook (lambda () (flyspell-mode -1))))
+
+;; allow M-SPC as a prefix
+(global-set-key (kbd "M-SPC") nil)
 
 ;; hippie-expand
 (global-set-key [(meta ?/)] 'hippie-expand)
@@ -54,39 +46,13 @@
         try-complete-lisp-symbol-partially
         try-complete-lisp-symbol))
 
-(add-hook 'sgml-mode-hook 'font-lock-turn-off-thing-lock)
-
-;; fullscreen frames
-; (add-to-list 'default-frame-alist '(maximize-emacs-window))
-
-;; (server-start)
-;; ;; gnuserv
-;; (require 'gnuserv)
-;; (gnuserv-start)
-;; (setq gnuserv-frame (selected-frame))
-;; (setenv "GNUSERV_SHOW_EMACS" "1")
-
 (defalias 'yes-or-no-p 'y-or-n-p)
 (defun kill-this-buffer () 
     (interactive) 
     (kill-buffer (current-buffer)))
-
-(defun maximize-emacs-window ()
-  "Maximizing window."
-  (interactive)
-  (w32-send-sys-command #xf030)
-)
-(defun restore-emacs-window ()
-  "Restoring window."
-  (interactive)
-  (w32-send-sys-command 61728)
-)
-
 ;;
 ;; Set key macros
 ;;
-(global-set-key "\C-c\C-g" 'goto-line)
-(global-set-key "\C-c\C-l" 'what-line)
 (global-set-key [delete]   'delete-char)
 (global-set-key [home]     'beginning-of-line)
 (global-set-key [end]      'end-of-line)
@@ -106,27 +72,18 @@
 (global-set-key [C-f4]    'kill-and-close-frame)
 
 (global-set-key (kbd "M-o")     'other-window)
-(global-set-key [f10]     'magit-status)
-(global-set-key [f3]      'grep)
-(global-set-key [f12]     'maximize-emacs-window)
-(global-set-key [C-f12]   'restore-emacs-window)
 (global-set-key [C-f4]    'kill-this-buffer)
 (global-set-key (kbd "<f8>") 'isearch-backward-symbol-at-point)
 
 ;; initial package setup
-;(push "path/to/use-package" load-path)
 (require 'use-package)
 (require 'package)
 (mapc (lambda(p) (push p package-archives))
       '(
-        ("melpa" . "http://melpa.milkbox.net/packages/")))
+        ("melpa" . "http://melpa.org/packages/")))
 (package-refresh-contents)
 (package-initialize)
 
-;; a lot of use-package stuffs are from https://github.com/jordonbiondo/.emacs.d/blob/master/init.el
-
-;; this will install undo-tree if it's not there
-;; and it will set it up how I want
 (use-package undo-tree
   :init (global-undo-tree-mode 1)
   :bind (("C-c j" . undo-tree-undo)
@@ -138,13 +95,15 @@
 (use-package magit
   :defer t
   :ensure t
-  :bind ("C-x m" . magit-status)
+  :config
+  (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
+  :bind ("M-SPC g s" . magit-status)
   :commands magit-status)
 
-(use-package fullframe
-  :ensure t)
+;; (use-package fullframe
+;;   :ensure t)
 
-(fullframe magit-status magit-mode-quit-window)
+;; (fullframe magit-status magit-mode-quit-window)
 
 (use-package git-timemachine
   :ensure t
@@ -158,36 +117,6 @@
   :defer t
   :ensure t)
 
-(use-package web-mode
-  :mode ("\\.html$" . web-mode)
-  :config (progn
-            (defun web-indirect-this-thing()
-              (interactive)
-              (let ((beg 0) (end 0))
-                (save-excursion
-                  (setq beg (progn (web-mode-forward-sexp -1)
-                                   (call-interactively 'web-mode-tag-end)
-                                   (point)))
-                  (setq end (progn  (web-mode-forward-sexp 1)
-                                    (point))))
-                (indirect-region beg end))))
-  :ensure t)
-
-(require 'cl)
-(use-package csharp-mode
-  :mode ("\\.cs$" . csharp-mode)
-  :config (progn
-            (add-hook 'csharp-mode-hook
-                      (defun jorbi/csharp-setup-function ()
-                        (setq c-basic-offset 4
-                              indent-tabs-mode nil)
-                        (hs-minor-mode t)
-                        ))
-            (font-lock-add-keywords
-             'csharp-mode
-             '(("\\(// *\\)\\(todo\\)\\(.*$\\)" 2 'font-lock-warning-face t))))
-  :ensure t)
-
 (use-package markdown-mode
   :defer t
   :ensure t)
@@ -197,6 +126,7 @@
   :ensure t)
 
 (use-package eldoc
+  :ensure t
   :commands eldoc-mode)
 
 (use-package lisp-mode
@@ -224,7 +154,49 @@
       ibuffer-elide-long-columns t
       ibuffer-eliding-string "&"))
 
-(load-theme 'manoj-dark 'no-confirm)
+(use-package counsel
+  :ensure t
+  :config
+  (setq ivy-use-virtual-buffers t)
+  (setq enable-recursive-minibuffers t)
+  :bind
+  ("M-SPC s s" . swiper)
+  ("M-SPC s r" . counsel-rg)
+  ("M-x" . counsel-M-x)
+  ("C-x b" . ivy-switch-buffer)
+  ("M-SPC b b" . ivy-switch-buffer)
+  :diminish counsel-mode)
+(counsel-mode t)
+
+(use-package tide
+  :ensure t
+  :config
+  (setq tide-format-options '(:insertSpaceAfterFunctionKeywordForAnonymousFunctions t :placeOpenBraceOnNewLineForFunctions nil :indentSize 2 :tabSize 2))
+  (setq-default typescript-indent-level 2)
+  :after (typescript-mode company flycheck)
+  :hook ((typescript-mode . tide-setup)
+         (typescript-mode . tide-hl-identifier-mode)
+         (before-save . tide-format-before-save)))
+
+(use-package js2-mode
+  :ensure t)
+(setq js-indent-level 2)
+
+(eval-after-load 'flycheck
+    '(add-hook 'flycheck-mode-hook #'flycheck-typescript-tslint-setup))
+
+(use-package golden-ratio
+  :ensure t)
+
+;; required for editing in the ivy-occur buffer
+(use-package wgrep
+  :ensure t)
+
+;; distraction free mode
+(use-package olivetti
+  :ensure t)
+
+(load-theme 'leuven 'no-confirm)
 
 ;; set by emacs
 
@@ -240,6 +212,9 @@
  '(flyspell-default-dictionary "english")
  '(font-latex-do-multi-line t)
  '(global-font-lock-mode t nil (font-lock))
+ '(package-selected-packages
+   (quote
+    (wgrep golden-ratio flycheck-typescript-tslint js2-mode olivetti tide counsel company markdown-mode helm gh git-timemachine fullframe magit undo-tree)))
  '(show-paren-mode t nil (paren))
  '(uniquify-buffer-name-style (quote forward) nil (uniquify)))
 (custom-set-faces
