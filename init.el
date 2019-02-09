@@ -1,8 +1,8 @@
-;; -*- mode: lisp -*-
+;; -*- mode: emacs-lisp -*-
 (require 'package)
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives
-             '("melpa" . "http://melpa.org/packages/") t)
+             '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 
 (when (not package-archive-contents)
@@ -48,17 +48,14 @@
   :defer t
   :ensure t)
 
-(use-package helm
-  :defer t
-  :ensure t)
-
 (use-package markdown-mode
   :defer t
   :ensure t)
 
 (use-package company
   :defer t
-  :ensure t)
+  :ensure t
+  :hook (prog-mode . company-mode))
 
 (use-package eldoc
   :ensure t
@@ -103,11 +100,15 @@
   :diminish counsel-mode)
 (counsel-mode t)
 
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+
 (use-package tide
   :ensure t
-  :config
+  :init
   (setq tide-format-options '(:insertSpaceAfterFunctionKeywordForAnonymousFunctions t :placeOpenBraceOnNewLineForFunctions nil :indentSize 2 :tabSize 2))
-  (setq-default typescript-indent-level 2)
+  (setq typescript-indent-level 2)
   :after (typescript-mode company flycheck)
   :hook ((typescript-mode . tide-setup)
          (typescript-mode . tide-hl-identifier-mode)
@@ -116,9 +117,6 @@
 (use-package js2-mode
   :ensure t)
 (setq js-indent-level 2)
-
-(eval-after-load 'flycheck
-    '(add-hook 'flycheck-mode-hook #'flycheck-typescript-tslint-setup))
 
 (use-package golden-ratio
   :ensure t)
