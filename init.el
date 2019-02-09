@@ -1,88 +1,23 @@
 ;; -*- mode: lisp -*-
-;;
-;; Set whatever
-;;
+(require 'package)
+(setq package-enable-at-startup nil)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.org/packages/") t)
+(package-initialize)
 
-(add-to-list 'load-path "~/.emacs.d/elisp/use-package-2.4")
+(when (not package-archive-contents)
+  (package-refresh-contents))
 
-(setq require-final-newline t)
-(setq inhibit-startup-message t)
-(line-number-mode t)
-(column-number-mode t)
-(setq-default transient-mark-mode t)
-(setq fill-column 80)
-(setq-default indent-tabs-mode nil)
-(setq frame-title-format
-      '("%S: " (buffer-file-name "%f"
-                                 (dired-directory dired-directory "%b"))))
-(cond ((fboundp 'global-font-lock-mode)
-       ;; Turn on font-lock in all modes that support it
-       (global-font-lock-mode t)
-       ;; Maximum colors
-       (setq font-lock-maximum-decoration t)))
+;; Bootstrap `use-package'
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
 
-(dolist (hook '(text-mode-hook))
-  (add-hook hook (lambda () (flyspell-mode 1))))
-(dolist (hook '(text-mode-hook))
-  (add-hook hook (lambda () (auto-fill-mode 1))))
-(dolist (hook '(change-log-mode-hook log-edit-mode-hook))
-  (add-hook hook (lambda () (flyspell-mode -1))))
+(eval-when-compile
+  (require 'use-package))
 
 ;; allow M-SPC as a prefix
 (global-set-key (kbd "M-SPC") nil)
-
-;; hippie-expand
-(global-set-key [(meta ?/)] 'hippie-expand)
-(setq hippie-expand-try-functions-list
-      '(try-expand-dabbrev
-        try-expand-dabbrev-visible
-        try-expand-dabbrev-all-buffers
-        try-expand-dabbrev-from-kill
-        try-complete-file-name-partially
-        try-complete-file-name
-        try-expand-all-abbrevs
-        try-expand-list
-        try-expand-line
-        try-complete-lisp-symbol-partially
-        try-complete-lisp-symbol))
-
-(defalias 'yes-or-no-p 'y-or-n-p)
-(defun kill-this-buffer () 
-    (interactive) 
-    (kill-buffer (current-buffer)))
-;;
-;; Set key macros
-;;
-(global-set-key [delete]   'delete-char)
-(global-set-key [home]     'beginning-of-line)
-(global-set-key [end]      'end-of-line)
-(global-set-key [prior]    'scroll-down)
-(global-set-key [next]     'scroll-up)
-(global-set-key [C-right]  'forward-word)
-(global-set-key [C-left]   'backward-word)
-(global-set-key [C-home]  'beginning-of-buffer)
-(global-set-key [C-end]   'end-of-buffer)
-(global-set-key [C-f5]    'compile)
-
-(fset 'kill-and-close-frame
-      (lambda ()
-        (interactive)
-                            (kill-buffer)
-                            (delete-frame)))
-(global-set-key [C-f4]    'kill-and-close-frame)
-
-(global-set-key (kbd "M-o")     'other-window)
-(global-set-key [C-f4]    'kill-this-buffer)
-(global-set-key (kbd "<f8>") 'isearch-backward-symbol-at-point)
-
-;; initial package setup
-(require 'use-package)
-(require 'package)
-(mapc (lambda(p) (push p package-archives))
-      '(
-        ("melpa" . "http://melpa.org/packages/")))
-(package-refresh-contents)
-(package-initialize)
 
 (use-package undo-tree
   :init (global-undo-tree-mode 1)
@@ -100,10 +35,10 @@
   :bind ("M-SPC g s" . magit-status)
   :commands magit-status)
 
-;; (use-package fullframe
-;;   :ensure t)
+(use-package fullframe
+  :ensure t)
 
-;; (fullframe magit-status magit-mode-quit-window)
+(fullframe magit-status magit-mode-quit-window)
 
 (use-package git-timemachine
   :ensure t
@@ -196,7 +131,85 @@
 (use-package olivetti
   :ensure t)
 
+(use-package yasnippet
+  :ensure t
+  :config
+  (use-package yasnippet-snippets
+    :ensure t)
+  (yas-global-mode t)
+  :diminish yas-minor-mode)
+
 (load-theme 'leuven 'no-confirm)
+
+;; Misc. customization
+(setq require-final-newline t)
+(setq inhibit-startup-message t)
+(line-number-mode t)
+(column-number-mode t)
+(setq-default transient-mark-mode t)
+(setq fill-column 80)
+(setq-default indent-tabs-mode nil)
+(setq frame-title-format
+      '("%S: " (buffer-file-name "%f"
+                                 (dired-directory dired-directory "%b"))))
+(cond ((fboundp 'global-font-lock-mode)
+       ;; Turn on font-lock in all modes that support it
+       (global-font-lock-mode t)
+       ;; Maximum colors
+       (setq font-lock-maximum-decoration t)))
+
+(dolist (hook '(text-mode-hook))
+  (add-hook hook (lambda () (flyspell-mode 1))))
+(dolist (hook '(text-mode-hook))
+  (add-hook hook (lambda () (auto-fill-mode 1))))
+(dolist (hook '(change-log-mode-hook log-edit-mode-hook))
+  (add-hook hook (lambda () (flyspell-mode -1))))
+
+;; hippie-expand
+(global-set-key [(meta ?/)] 'hippie-expand)
+(setq hippie-expand-try-functions-list
+      '(try-expand-dabbrev
+        try-expand-dabbrev-visible
+        try-expand-dabbrev-all-buffers
+        try-expand-dabbrev-from-kill
+        try-complete-file-name-partially
+        try-complete-file-name
+        try-expand-all-abbrevs
+        try-expand-list
+        try-expand-line
+        try-complete-lisp-symbol-partially
+        try-complete-lisp-symbol))
+
+(defalias 'yes-or-no-p 'y-or-n-p)
+(defun kill-this-buffer ()
+    (interactive)
+    (kill-buffer (current-buffer)))
+;;
+;; Set key macros
+;;
+(global-set-key [delete]   'delete-char)
+(global-set-key [home]     'beginning-of-line)
+(global-set-key [end]      'end-of-line)
+(global-set-key [prior]    'scroll-down)
+(global-set-key [next]     'scroll-up)
+(global-set-key [C-right]  'forward-word)
+(global-set-key [C-left]   'backward-word)
+(global-set-key [C-home]  'beginning-of-buffer)
+(global-set-key [C-end]   'end-of-buffer)
+(global-set-key [C-f5]    'compile)
+
+(fset 'kill-and-close-frame
+      (lambda ()
+        (interactive)
+                            (kill-buffer)
+                            (delete-frame)))
+(global-set-key [C-f4]    'kill-and-close-frame)
+
+(global-set-key (kbd "M-o")     'other-window)
+(global-set-key [C-f4]    'kill-this-buffer)
+(global-set-key (kbd "<f8>") 'isearch-backward-symbol-at-point)
+
+(prefer-coding-system 'utf-8)
 
 ;; set by emacs
 
