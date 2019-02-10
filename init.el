@@ -118,6 +118,11 @@
   :ensure t)
 (setq js-indent-level 2)
 
+;; js repl/debugger. needs `npm i -g indium`
+(use-package indium
+  :ensure t
+  :defer t)
+
 (use-package golden-ratio
   :ensure t)
 
@@ -225,7 +230,7 @@
  '(global-font-lock-mode t nil (font-lock))
  '(package-selected-packages
    (quote
-    (wgrep golden-ratio flycheck-typescript-tslint js2-mode olivetti tide counsel company markdown-mode helm gh git-timemachine fullframe magit undo-tree)))
+    (indium wgrep golden-ratio flycheck-typescript-tslint js2-mode olivetti tide counsel company markdown-mode helm gh git-timemachine fullframe magit undo-tree)))
  '(show-paren-mode t nil (paren))
  '(uniquify-buffer-name-style (quote forward) nil (uniquify)))
 (custom-set-faces
