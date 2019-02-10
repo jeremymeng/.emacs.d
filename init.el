@@ -107,7 +107,13 @@
 (use-package tide
   :ensure t
   :init
-  (setq tide-format-options '(:insertSpaceAfterFunctionKeywordForAnonymousFunctions t :placeOpenBraceOnNewLineForFunctions nil :indentSize 2 :tabSize 2))
+  (setq tide-format-options
+        '(:tabSize 2
+                   :insertSpaceAfterFunctionKeywordForAnonymousFunctions nil
+                   :placeOpenBraceOnNewLineForFunctions nil
+                   :indentSize 2
+                   :insertSpaceBeforeFunctionParenthesis nil
+                   ))
   (setq typescript-indent-level 2)
   :after (typescript-mode company flycheck)
   :hook ((typescript-mode . tide-setup)
