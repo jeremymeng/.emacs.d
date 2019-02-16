@@ -20,11 +20,13 @@
 (global-set-key (kbd "M-SPC") nil)
 
 (use-package undo-tree
-  :init (global-undo-tree-mode 1)
-  :bind (("C-c j" . undo-tree-undo)
-         ("C-c k" . undo-tree-redo)
-         ("C-c l" . undo-tree-switch-branch)
-         ("C-c ;" . undo-tree-visualize))
+  :init
+  (global-undo-tree-mode 1)
+  :bind
+  (("C-c j" . undo-tree-undo)
+   ("C-c k" . undo-tree-redo)
+   ("C-c l" . undo-tree-switch-branch)
+   ("C-c ;" . undo-tree-visualize))
   :ensure t)
 
 (use-package magit
@@ -34,6 +36,9 @@
   (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
   :bind ("M-SPC g s" . magit-status)
   :commands magit-status)
+
+(use-package forge
+   :ensure t)
 
 (use-package fullframe
   :ensure t)
@@ -62,34 +67,48 @@
   :commands eldoc-mode)
 
 (use-package lisp-mode
-  :config (progn
-            (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-            (add-hook 'lisp-interaction-mode-hook 'eldoc-mode)))
+  :config
+  (progn
+    (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+    (add-hook 'lisp-interaction-mode-hook 'eldoc-mode)))
 
 (use-package hideshow
-  :bind ("C-c h" . hs-toggle-hiding))
+  :bind
+  ("C-c h" . hs-toggle-hiding))
 
 (use-package files
-  :config (setq backup-directory-alist `(("." . "~/.saves"))
-                version-control t
-                kept-new-versions 10
-                kept-old-versions 0
-                delete-old-versions t
-                backup-by-copying t))
+  :config
+  (setq backup-directory-alist `(("." . "~/.saves"))
+        version-control t
+        kept-new-versions 10
+        kept-old-versions 0
+        delete-old-versions t
+        backup-by-copying t))
 
 (use-package ibuffer
-  :bind (("C-x C-b" . ibuffer))
-  :config (setq ibuffer-formats '((mark modified read-only " " (name 16 16) " "
-                              (size 9 -1 :right) " " (mode 16 16)
-                              " " (process 8 -1) " " filename)
-                        (mark " " (name 16 -1) " " filename))
-      ibuffer-elide-long-columns t
-      ibuffer-eliding-string "&"))
+  :bind
+  (("C-x C-b" . ibuffer))
+  :config
+  (setq ibuffer-formats
+        '((mark modified read-only " " (name 16 16) " "
+                (size 9 -1 :right) " " (mode 16 16)
+                " " (process 8 -1) " " filename)
+          (mark " " (name 16 -1) " " filename))
+        ibuffer-elide-long-columns t
+        ibuffer-eliding-string "&"))
 
 (use-package counsel
   :ensure t
   :config
   (setq ivy-use-virtual-buffers t)
+  (setq ivy-height 20)
+  (setq ivy-count-format "(%d/%d) ")
+  (setq ivy-display-style 'fancy)
+  (setq ivy-format-function 'ivy-format-function-line) ; Make highlight extend all the way to the right
+  ;; TODO testing out the fuzzy search
+  (setq ivy-re-builders-alist
+        '((counsel-M-x . ivy--regex-fuzzy) ; Only counsel-M-x use flx fuzzy search
+                  (t . ivy--regex-plus)))
   (setq enable-recursive-minibuffers t)
   :bind
   ("M-SPC s s" . swiper)
@@ -97,7 +116,7 @@
   ("M-x" . counsel-M-x)
   ("C-x b" . ivy-switch-buffer)
   ("M-SPC b b" . ivy-switch-buffer)
-  :diminish counsel-mode)
+  :diminish (counsel-mode . ""))
 (counsel-mode t)
 
 (use-package flycheck
@@ -109,6 +128,7 @@
   :init
   (setq tide-format-options
         '(:tabSize 2
+                   :convertTabsToSpaces t
                    :insertSpaceAfterFunctionKeywordForAnonymousFunctions nil
                    :placeOpenBraceOnNewLineForFunctions nil
                    :indentSize 2
@@ -118,7 +138,8 @@
   :after (typescript-mode company flycheck)
   :hook ((typescript-mode . tide-setup)
          (typescript-mode . tide-hl-identifier-mode)
-         (before-save . tide-format-before-save)))
+         ;(before-save . tide-format-before-save)
+         ))
 
 (use-package js2-mode
   :ensure t)
@@ -156,7 +177,7 @@
 (line-number-mode t)
 (column-number-mode t)
 (setq-default transient-mark-mode t)
-(setq fill-column 80)
+(setq fill-column 78)
 (setq-default indent-tabs-mode nil)
 (setq frame-title-format
       '("%S: " (buffer-file-name "%f"
@@ -190,9 +211,7 @@
         try-complete-lisp-symbol))
 
 (defalias 'yes-or-no-p 'y-or-n-p)
-(defun kill-this-buffer ()
-    (interactive)
-    (kill-buffer (current-buffer)))
+
 ;;
 ;; Set key macros
 ;;
@@ -207,18 +226,26 @@
 (global-set-key [C-end]   'end-of-buffer)
 (global-set-key [C-f5]    'compile)
 
+(defun kill-this-buffer ()
+  "Kill current buffer."
+    (interactive)
+    (kill-buffer (current-buffer)))
+
 (fset 'kill-and-close-frame
       (lambda ()
         (interactive)
                             (kill-buffer)
                             (delete-frame)))
 (global-set-key [C-f4]    'kill-and-close-frame)
+(global-set-key (kbd "M-SPC b d")    'kill-this-buffer)
 
 (global-set-key (kbd "M-o")     'other-window)
-(global-set-key [C-f4]    'kill-this-buffer)
 (global-set-key (kbd "<f8>") 'isearch-backward-symbol-at-point)
 
 (prefer-coding-system 'utf-8)
+
+;; Prefer vertical split
+(setq split-height-threshold 200)
 
 ;; set by emacs
 
