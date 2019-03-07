@@ -169,6 +169,21 @@
   (yas-global-mode t)
   :diminish yas-minor-mode)
 
+(use-package rg
+  :commands (rg rg-project rg-dwim)
+  :ensure t)
+
+(use-package projectile
+  :diminish projectile-mode
+  :init
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  :config
+  (projectile-mode +1)
+  :ensure t)
+
+(use-package smex
+  :ensure t)
+
 (load-theme 'leuven 'no-confirm)
 
 ;; Misc. customization
@@ -263,7 +278,7 @@
  '(global-font-lock-mode t nil (font-lock))
  '(package-selected-packages
    (quote
-    (indium wgrep golden-ratio flycheck-typescript-tslint js2-mode olivetti tide counsel company markdown-mode helm gh git-timemachine fullframe magit undo-tree)))
+    (smex rg projectile indium wgrep golden-ratio flycheck-typescript-tslint js2-mode olivetti tide counsel company markdown-mode helm gh git-timemachine fullframe magit undo-tree)))
  '(show-paren-mode t nil (paren))
  '(uniquify-buffer-name-style (quote forward) nil (uniquify)))
 (custom-set-faces
