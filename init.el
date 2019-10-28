@@ -213,6 +213,8 @@
 (use-package expand-region
   :bind
   ("M-SPC v" . er/expand-region)
+  :config
+  (setq expand-region-contract-fast-key "V")
   :ensure t)
 
 (use-package which-key
