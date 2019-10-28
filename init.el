@@ -10,6 +10,9 @@
                     :weight 'normal
                     :width 'normal)
 
+(when (member "Symbola" (font-family-list))
+  (set-fontset-font t 'unicode "Symbola" nil 'prepend))
+
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 (setq user-emacs-directory "~/.tryout/")
 
@@ -282,6 +285,15 @@
          ;; ("M-," . mc/unmark-next-like-this)
          ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
 
+(use-package atomic-chrome
+  :config
+  (atomic-chrome-start-server)
+  (setq atomic-chrome-default-major-mode 'markdown-mode)
+  (setq atomic-chrome-buffer-open-style 'full)
+  (add-to-list 'auto-mode-alist '("stack\\(exchange\\|overflow\\)\\.com\\.[a-z0-9]+\\.txt" . markdown-mode))
+  (add-to-list 'auto-mode-alist '("github\\.com\\.[a-z0-9]+\\.txt" . markdown-mode))
+  :ensure t)
+
 (server-start)
 
 (load-theme 'leuven 'no-confirm)
@@ -371,6 +383,15 @@
 
 ;; Prefer vertical split
 (setq split-height-threshold 200)
+
+(if (eq system-type 'windows-nt)
+    (setq-default ispell-program-name
+              "c:\\Aspell\\bin\\aspell.exe")
+  (setq markdown-command
+        "c:\\tools\\bin\\multimarkdown.exe")
+  (setq browse-url-browser-function 'browse-url-firefox)
+  (setq browse-url-firefox-program "C:\\Program Files\\Mozilla Firefox\\firefox.exe")
+)
 
 ;; set by emacs
 
