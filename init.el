@@ -303,6 +303,7 @@
 (setq inhibit-startup-message t)
 (line-number-mode t)
 (column-number-mode t)
+(auto-image-file-mode t)
 (setq-default transient-mark-mode t)
 (setq fill-column 80)
 (setq-default indent-tabs-mode nil)
