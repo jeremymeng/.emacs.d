@@ -16,6 +16,12 @@
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 (setq user-emacs-directory "~/.tryout/")
 
+(if (eq system-type 'windows-nt)
+    (setq ispell-program-name          "c:/Aspell/bin/aspell.exe"
+          markdown-command             "c:/tools/bin/multimarkdown.exe"
+          browse-url-browser-function  'browse-url-firefox
+          browse-url-firefox-program   "C:/Program Files/Mozilla Firefox/firefox.exe"))
+
 (require 'package)
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives
@@ -36,6 +42,12 @@
 
 ;; allow M-SPC as a prefix
 (global-set-key (kbd "M-SPC") nil)
+(global-set-key (kbd "M-SPC g l") nil)
+
+(use-package which-key
+  :config
+  (which-key-mode 1)
+  :ensure t)
 
 (use-package undo-tree
   :init
@@ -55,6 +67,62 @@
   :bind
   ("M-SPC g s" . magit-status)
   :commands magit-status)
+
+(use-package magit-popup
+  :ensure t
+  :demand t)
+
+(use-package magit-gh-pulls
+  :ensure t
+  :config
+  (progn
+    (add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls)))
+
+;; from spacemacs
+(defun spacemacs/git-link-copy-url-only ()
+  "Only copy the generated link to the kill ring."
+  (interactive)
+  (let (git-link-open-in-browser)
+    (call-interactively 'spacemacs/git-link)))
+
+(defun spacemacs/git-link-commit-copy-url-only ()
+  "Only copy the generated link to the kill ring."
+  (interactive)
+  (let (git-link-open-in-browser)
+    (call-interactively 'spacemacs/git-link-commit)))
+
+(defun spacemacs/git-link ()
+  "Allow the user to run git-link in a git-timemachine buffer."
+  (interactive)
+  (require 'git-link)
+  (if (and (boundp 'git-timemachine-revision)
+           git-timemachine-revision)
+      (cl-letf (((symbol-function 'git-link--branch)
+                 (lambda ()
+                   (car git-timemachine-revision))))
+        (call-interactively 'git-link))
+    (call-interactively 'git-link)))
+
+(defun spacemacs/git-link-commit ()
+  "Allow the user to run git-link-commit in a git-timemachine buffer."
+  (interactive)
+  (require 'git-link)
+  (if (and (boundp 'git-timemachine-revision)
+           git-timemachine-revision)
+      (cl-letf (((symbol-function 'word-at-point)
+                 (lambda ()
+                   (car git-timemachine-revision))))
+        (call-interactively 'git-link-commit))
+    (call-interactively 'git-link-commit)))
+
+(use-package git-link
+  :ensure t
+  :config
+  :bind
+  (("M-SPC g l l" . spacemacs/git-link)
+   ("M-SPC g l c" . spacemacs/git-link-commit)
+   ("M-SPC g l L" . spacemacs/git-link-copy-url-only)
+   ("M-SPC g l C" . spacemacs/git-link-commit-copy-url-only)))
 
 (use-package forge
    :ensure t)
@@ -220,11 +288,6 @@
   (setq expand-region-contract-fast-key "V")
   :ensure t)
 
-(use-package which-key
-  :config
-  (which-key-mode 1)
-  :ensure t)
-
 (use-package smartparens
   :ensure t
   :config
@@ -275,14 +338,14 @@
          ("M-SPC s m b" . mc/mark-all-like-this)
          ("M-SPC s m m" . mc/mark-more-like-this-extended)
          ("M-SPC s m r" . mc/edit-lines)
+         ("M-SPC s m n" . mc/mark-next-like-this)
+         ("M-SPC s m u" . mc/unmark-next-like-this)
          ("M-SPC s m s l" . mc/insert-letters)
          ("M-SPC s m s m" . mc/mark-sgml-tag-pair)
          ("M-SPC s m s n" . mc/insert-numbers)
          ("M-SPC s m s r" . set-rectangular-region-anchor)
          ("M-SPC s m s s" . mc/sort-regions)
          ("M-SPC s m s t" . mc/reverse-regions)
-         ;; ("M-." . mc/mark-next-like-this)
-         ;; ("M-," . mc/unmark-next-like-this)
          ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
 
 (use-package atomic-chrome
@@ -293,6 +356,22 @@
   (add-to-list 'auto-mode-alist '("stack\\(exchange\\|overflow\\)\\.com\\.[a-z0-9]+\\.txt" . markdown-mode))
   (add-to-list 'auto-mode-alist '("github\\.com\\.[a-z0-9]+\\.txt" . markdown-mode))
   :ensure t)
+
+(use-package engine-mode
+  :init
+  :ensure t
+  :preface
+  (setq engine/keybinding-prefix (kbd "C-c /"))
+  :config
+  (progn
+    (setq engine/browser-function 'browse-url-firefox)
+    (defengine google
+      "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
+      :keybinding "g")
+    (defengine stackoverflow
+      "https://stackoverflow.com/search?q=%s"
+      :keybinding "s")
+    (engine-mode t)))
 
 (server-start)
 
@@ -384,15 +463,6 @@
 
 ;; Prefer vertical split
 (setq split-height-threshold 200)
-
-(if (eq system-type 'windows-nt)
-    (setq-default ispell-program-name
-              "c:\\Aspell\\bin\\aspell.exe")
-  (setq markdown-command
-        "c:\\tools\\bin\\multimarkdown.exe")
-  (setq browse-url-browser-function 'browse-url-firefox)
-  (setq browse-url-firefox-program "C:\\Program Files\\Mozilla Firefox\\firefox.exe")
-)
 
 ;; set by emacs
 
