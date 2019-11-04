@@ -361,7 +361,7 @@
   :init
   :ensure t
   :preface
-  (setq engine/keybinding-prefix (kbd "C-c /"))
+  (setq engine/keybinding-prefix "M-SPC s /")
   :config
   (progn
     (setq engine/browser-function 'browse-url-firefox)
