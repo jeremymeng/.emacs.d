@@ -13,6 +13,11 @@
 (when (member "Symbola" (font-family-list))
   (set-fontset-font t 'unicode "Symbola" nil 'prepend))
 
+(custom-theme-set-faces
+ 'user
+ '(variable-pitch ((t (:family "SF Pro Text" :height 100 :weight light))))
+ '(fixed-pitch ((t (:family "SF Mono" :slant normal :weight normal :height 100 :width normal)))))
+
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 (setq user-emacs-directory "~/.tryout/")
 
@@ -409,6 +414,23 @@
 
 (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
   (add-hook hook (lambda () (flyspell-mode -1))))
+
+;; variable-pitch for org-mode
+(add-hook 'org-mode-hook
+          (lambda ()
+            (variable-pitch-mode 1)
+            ))
+
+(custom-theme-set-faces
+ 'user
+ '(org-block                 ((t (:inherit fixed-pitch))))
+ '(org-code                  ((t (:inherit fixed-pitch))))
+ '(org-table                 ((t (:inherit fixed-pitch))))
+ '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+ '(org-property-value        ((t (:inherit fixed-pitch))) t)
+ '(org-special-keyword       ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+ '(org-tag                   ((t (:inherit (shadow fixed-pitch) :weight bold))))
+ '(org-verbatim              ((t (:inherit (shadow fixed-pitch))))))
 
 ;; hippie-expand
 (global-set-key [(meta ?/)] 'hippie-expand)
