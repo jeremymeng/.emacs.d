@@ -406,6 +406,7 @@
   "Configure text mode hooks."
   (olivetti-mode 1)
   (olivetti-set-width 140)
+  (setq line-spacing 0.1)
   (flyspell-mode 1)
   (visual-line-mode 1))
 
@@ -424,11 +425,15 @@
 (custom-theme-set-faces
  'user
  '(org-block                 ((t (:inherit fixed-pitch))))
+ '(org-block-begin-line      ((t (:inherit (font-lock-comment-face fixed-pitch) :height 0.8))))
+ '(org-block-end-line        ((t (:inherit (font-lock-comment-face fixed-pitch) :height 0.8))))
  '(org-code                  ((t (:inherit fixed-pitch))))
- '(org-table                 ((t (:inherit fixed-pitch))))
  '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+ '(org-indent                ((t (:inherit (org-hide fixed-pitch)))))
+ '(org-meta-line             ((t (:inherit (font-lock-comment-face fixed-pitch) :height 0.8))))
  '(org-property-value        ((t (:inherit fixed-pitch))) t)
  '(org-special-keyword       ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+ '(org-table                 ((t (:inherit fixed-pitch))))
  '(org-tag                   ((t (:inherit (shadow fixed-pitch) :weight bold))))
  '(org-verbatim              ((t (:inherit (shadow fixed-pitch))))))
 
