@@ -404,9 +404,12 @@
 
 (defun my/text-mode-setup ()
   "Configure text mode hooks."
+  (setq line-spacing 0.1
+        left-margin-width 2
+        right-margin-width 2)
+  (set-window-buffer nil (current-buffer))
   (olivetti-mode 1)
   (olivetti-set-width 140)
-  (setq line-spacing 0.1)
   (flyspell-mode 1)
   (visual-line-mode 1))
 
