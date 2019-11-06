@@ -423,7 +423,15 @@
 (add-hook 'org-mode-hook
           (lambda ()
             (variable-pitch-mode 1)
+            (setq org-hide-emphasis-markers t)
             ))
+;; prettify
+(setq-default prettify-symbols-alist '(("#+BEGIN_SRC" . "📃")
+                                       ("#+END_SRC" . "📃")
+                                       ("#+begin_src" . "📃")
+                                       ("#+end_src" . "📃")))
+(setq prettify-symbols-unprettify-at-point 'right-edge)
+(add-hook 'org-mode-hook 'prettify-symbols-mode)
 
 (custom-theme-set-faces
  'user
