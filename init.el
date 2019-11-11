@@ -139,11 +139,27 @@
 
 (use-package git-timemachine
   :ensure t
+  :bind
+  (("M-SPC g t" . git-timemachine))
   :defer t)
+
+(use-package git-messenger
+  :ensure t
+  :bind
+  (("M-SPC g M" . git-messenger:popup-message)))
 
 (use-package gh
   :defer t
   :ensure t)
+
+(use-package magit-gitflow
+  :ensure t
+  :init
+  (progn
+    (setq magit-gitflow-popup-key "%"))
+  :config
+  (progn
+    (add-hook 'magit-mode-hook 'turn-on-magit-gitflow)))
 
 (use-package markdown-mode
   :defer t
