@@ -70,7 +70,14 @@
   :config
   (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
   :bind
-  ("M-SPC g s" . magit-status)
+  (("M-SPC g s" . magit-status)
+   ("M-SPC g c" . magit-clone)
+   ("M-SPC g f f" . magit-find-file)
+   ("M-SPC g f l" . magit-log-buffer-file)
+   ("M-SPC g f d" . magit-diff)
+   ("M-SPC g m" . magit-dispatch)
+   ("M-SPC g S" . magit-stage-file)
+   ("M-SPC g U" . magit-unstage-file))
   :commands magit-status)
 
 (use-package magit-popup
